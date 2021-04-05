@@ -12,12 +12,15 @@ import java.nio.channels.Channels
 class GunzipSuite extends AnyFunSuite with Matchers {
   def randomData(max: Int) =
     Source
-      .unfold(new scala.util.Random)(
-        random =>
-          Some((random, {
-            val buf = Array.fill[Byte](1024 * 8)(0)
-            random.nextBytes(buf); buf
-          }))
+      .unfold(new scala.util.Random)(random =>
+        Some(
+          (
+            random, {
+              val buf = Array.fill[Byte](1024 * 8)(0)
+              random.nextBytes(buf); buf
+            }
+          )
+        )
       )
       .map(ByteString(_))
       .take(max.toLong)

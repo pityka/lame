@@ -72,8 +72,12 @@ object BlockGunzip {
         /* The following lines parsing the gzip header bear the copyright of:
          * Copyright (C) 2009-2019 Lightbend Inc. <https://www.lightbend.com>
          */
-        if (readByte() != 0x1F || readByte() != 0x8B) fail("Not in GZIP format") // check magic header
-        if (readByte() != 8) fail("Unsupported GZIP compression method") // check compression method
+        if (readByte() != 0x1f || readByte() != 0x8b)
+          fail("Not in GZIP format") // check magic header
+        if (readByte() != 8)
+          fail(
+            "Unsupported GZIP compression method"
+          ) // check compression method
         val flags = readByte()
         skip(6) // skip MTIME, XFL and OS fields
         if (flags != 4)
@@ -92,10 +96,12 @@ object BlockGunzip {
               "Not a valid BGZIP header. Needs extra subfield BC with payload of total block size"
             )
           else {
-            if (extraFieldsByteReader
-                  .readByte() != 0x42 || extraFieldsByteReader
-                  .readByte() != 0x43 || extraFieldsByteReader
-                  .readShortLE() != 2) findBSize
+            if (
+              extraFieldsByteReader
+                .readByte() != 0x42 || extraFieldsByteReader
+                .readByte() != 0x43 || extraFieldsByteReader
+                .readShortLE() != 2
+            ) findBSize
             else extraFieldsByteReader.readShortLE()
           }
         }
@@ -241,7 +247,7 @@ object BlockGunzip {
       .via(BlockGunzip(blockOffset, customInflater))
   }
 
-  val AddressMask = 0XFFFFFFFFFFFFL
+  val AddressMask = 0xffffffffffffL
   val OffsetMask = 0xffff
   val MaxFileOffset = AddressMask
   val MaxBlockOffset = OffsetMask

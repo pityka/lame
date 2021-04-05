@@ -81,7 +81,7 @@ class GzipCompressor(
     checkSum.update(input.toArray)
     bytesRead += input.length
   }
-  
+
   private def header(): ByteString =
     if (!headerSent) {
       headerSent = true
@@ -91,7 +91,8 @@ class GzipCompressor(
   private def trailer(): ByteString = {
     def int32(i: Int): ByteString = ByteString(i, i >> 8, i >> 16, i >> 24)
     val crc = checkSum.getValue.toInt
-    val tot = bytesRead.toInt // truncated to 32bit as specified in https://tools.ietf.org/html/rfc1952#section-2
+    val tot =
+      bytesRead.toInt // truncated to 32bit as specified in https://tools.ietf.org/html/rfc1952#section-2
     val trailer = int32(crc) ++ int32(tot)
 
     trailer
@@ -113,8 +114,8 @@ class GzipCompressor(
 
 object GzipCompressor {
   // RFC 1952: http://tools.ietf.org/html/rfc1952 section 2.2
-  val Header = ByteString(0x1F, // ID1
-    0x8B, // ID2
+  val Header = ByteString(0x1f, // ID1
+    0x8b, // ID2
     8, // CM = Deflate
     0, // FLG
     0, // MTIME 1
@@ -123,5 +124,5 @@ object GzipCompressor {
     0, // MTIME 4
     0, // XFL
     0 // OS
-    )
+  )
 }

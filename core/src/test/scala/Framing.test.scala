@@ -25,9 +25,8 @@ class FramingSuite extends AnyFunSuite with Matchers {
             ByteString("\na")
           )
         ).via(
-            lame.Framing.delimiter('\n', Int.MaxValue, allowTruncation = true)
-          )
-          .runWith(Sink.seq),
+          lame.Framing.delimiter('\n', Int.MaxValue, allowTruncation = true)
+        ).runWith(Sink.seq),
         Duration.Inf
       )
 

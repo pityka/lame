@@ -61,7 +61,7 @@ object Gunzip {
   private def crc16(data: ByteString) = {
     val crc = new CRC32
     data.asByteBuffers.foreach(crc.update)
-    crc.getValue.toInt & 0xFFFF
+    crc.getValue.toInt & 0xffff
   }
 
   @tailrec
@@ -143,7 +143,9 @@ object Gunzip {
        */
       if (readIntLE() != currentState.crc32.getValue.toInt)
         fail("Corrupt data (CRC32 checksum error)")
-      if (readIntLE() != currentState.inflater.getBytesWritten.toInt /* truncated to 32bit */ )
+      if (
+        readIntLE() != currentState.inflater.getBytesWritten.toInt /* truncated to 32bit */
+      )
         fail("Corrupt GZIP trailer ISIZE")
 
       currentState.inflater.reset()
@@ -171,13 +173,16 @@ object Gunzip {
       /* The following lines parsing the gzip header bear the copyright of:
        * Copyright (C) 2009-2019 Lightbend Inc. <https://www.lightbend.com>
        */
-      if (readByte() != 0x1F || readByte() != 0x8B) fail("Not in GZIP format") // check magic header
-      if (readByte() != 8) fail("Unsupported GZIP compression method") // check compression method
+      if (readByte() != 0x1f || readByte() != 0x8b)
+        fail("Not in GZIP format") // check magic header
+      if (readByte() != 8)
+        fail("Unsupported GZIP compression method") // check compression method
       val flags = readByte()
       skip(6) // skip MTIME, XFL and OS fields
       if ((flags & 4) > 0) skip(readShortLE()) // skip optional extra fields
       if ((flags & 8) > 0) skipZeroTerminatedString() // skip optional file name
-      if ((flags & 16) > 0) skipZeroTerminatedString() // skip optional file comment
+      if ((flags & 16) > 0)
+        skipZeroTerminatedString() // skip optional file comment
       if ((flags & 2) > 0 && crc16(fromStartToHere) != readShortLE())
         fail("Corrupt GZIP header")
       /* Lightbend copyright end */

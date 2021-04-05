@@ -100,8 +100,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
 
     data2
       .flatMap(_._2)
-      .map(
-        vfp => (BlockGunzip.getFileOffset(vfp), BlockGunzip.getBlockOffset(vfp))
+      .map(vfp =>
+        (BlockGunzip.getFileOffset(vfp), BlockGunzip.getBlockOffset(vfp))
       ) shouldBe Seq((0L, 0))
 
     AS.terminate()
@@ -121,20 +121,19 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
 
     data2
       .flatMap(_._2)
-      .map(
-        vfp => (BlockGunzip.getFileOffset(vfp), BlockGunzip.getBlockOffset(vfp))
+      .map(vfp =>
+        (BlockGunzip.getFileOffset(vfp), BlockGunzip.getBlockOffset(vfp))
       ) shouldBe Seq((0L, 0), (65536L, 26660), (131072L, 53320))
 
     val raw_blocks = 0 to 2 map { i =>
       Await
         .result(
           BlockGunzip
-            .sourceFromFactory(data2.flatMap(_._2).apply(i))(
-              fileOffSet =>
-                Source
-                  .single(
-                    data2.map(_._1).toList.reduce(_ ++ _).drop(fileOffSet.toInt)
-                  )
+            .sourceFromFactory(data2.flatMap(_._2).apply(i))(fileOffSet =>
+              Source
+                .single(
+                  data2.map(_._1).toList.reduce(_ ++ _).drop(fileOffSet.toInt)
+                )
             )
             .runWith(Sink.seq),
           Duration.Inf
@@ -163,20 +162,19 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
 
     data2
       .flatMap(_._2)
-      .map(
-        vfp => (BlockGunzip.getFileOffset(vfp), BlockGunzip.getBlockOffset(vfp))
+      .map(vfp =>
+        (BlockGunzip.getFileOffset(vfp), BlockGunzip.getBlockOffset(vfp))
       ) shouldBe Seq((0L, 0), (0L, 49152), (65536L, 32804))
 
     val raw_blocks = 0 to 2 map { i =>
       Await
         .result(
           BlockGunzip
-            .sourceFromFactory(data2.flatMap(_._2).apply(i))(
-              fileOffSet =>
-                Source
-                  .single(
-                    data2.map(_._1).toList.reduce(_ ++ _).drop(fileOffSet.toInt)
-                  )
+            .sourceFromFactory(data2.flatMap(_._2).apply(i))(fileOffSet =>
+              Source
+                .single(
+                  data2.map(_._1).toList.reduce(_ ++ _).drop(fileOffSet.toInt)
+                )
             )
             .runWith(Sink.seq),
           Duration.Inf

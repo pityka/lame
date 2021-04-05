@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009-2019 Lightbend Inc. <https://www.lightbend.com>
- * 
+ *
  * Changes to the Akka file: do not syncflush on each push
  */
 
@@ -20,15 +20,14 @@ object CompressionUtils {
     val out = Outlet[T](Logging.simpleName(this) + ".out")
     override val shape = FlowShape(in, out)
   }
- 
-  abstract class LinearGraphStage[I,O] extends GraphStage[FlowShape[I, O]] {
+
+  abstract class LinearGraphStage[I, O] extends GraphStage[FlowShape[I, O]] {
     val in = Inlet[I](Logging.simpleName(this) + ".in")
     val out = Outlet[O](Logging.simpleName(this) + ".out")
     override val shape = FlowShape(in, out)
   }
 
-  /**
-    * Creates a flow from a compressor constructor.
+  /** Creates a flow from a compressor constructor.
     */
   def compressorFlow(
       newCompressor: () => Compressor

@@ -30,8 +30,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
             BlockGzip
               .sinkWithIndexAsByteString(data = Sink.seq[ByteString])
               .mapMaterializedValue(
-                _.flatMap {
-                  case (f2, m2) => f2.map(m1 => (m1.reduce(_ ++ _), m2))
+                _.flatMap { case (f2, m2) =>
+                  f2.map(m1 => (m1.reduce(_ ++ _), m2))
                 }
               )
           ),
@@ -57,8 +57,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
             BlockGzip
               .sinkWithIndexAsByteString(data = Sink.seq[ByteString])
               .mapMaterializedValue(
-                _.flatMap {
-                  case (f2, m2) => f2.map(m1 => (m1.reduce(_ ++ _), m2))
+                _.flatMap { case (f2, m2) =>
+                  f2.map(m1 => (m1.reduce(_ ++ _), m2))
                 }
               )
           ),
@@ -104,8 +104,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
             BlockGzip
               .sinkWithIndexAsByteString(data = Sink.seq[ByteString])
               .mapMaterializedValue(
-                _.flatMap {
-                  case (f2, m2) => f2.map(m1 => (m1.reduce(_ ++ _), m2))
+                _.flatMap { case (f2, m2) =>
+                  f2.map(m1 => (m1.reduce(_ ++ _), m2))
                 }
               )
           ),
@@ -157,8 +157,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
             BlockGzip
               .sinkWithIndexAsByteString(data = Sink.seq[ByteString])
               .mapMaterializedValue(
-                _.flatMap {
-                  case (f2, m2) => f2.map(m1 => (m1.reduce(_ ++ _), m2))
+                _.flatMap { case (f2, m2) =>
+                  f2.map(m1 => (m1.reduce(_ ++ _), m2))
                 }
               )
           ),
@@ -173,7 +173,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
       ).iterator
     )
 
-    val concatenetedCompressedData = compressedData ++ compressedData ++ compressedData
+    val concatenetedCompressedData =
+      compressedData ++ compressedData ++ compressedData
 
     val parsedIndex = Index(concatenatedIndex)
     parsedIndex.length shouldBe 12
@@ -194,9 +195,8 @@ class BlockGzipSuite extends AnyFunSuite with Matchers {
       Await
         .result(
           BlockGunzip
-            .sourceFromFactory(vfp)(
-              fileOffSet =>
-                Source.single(concatenetedCompressedData.drop(fileOffSet.toInt))
+            .sourceFromFactory(vfp)(fileOffSet =>
+              Source.single(concatenetedCompressedData.drop(fileOffSet.toInt))
             )
             .runWith(Sink.seq),
           Duration.Inf

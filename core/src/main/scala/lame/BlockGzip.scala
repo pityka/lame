@@ -18,7 +18,8 @@ import akka.stream.stage.GraphStage
 
 object BlockGzip {
 
-  val MaxUncompressed = 65536 - 10 - 26 // 10 is GZIP overhead if data is uncompressable and gzip level is 0
+  val MaxUncompressed =
+    65536 - 10 - 26 // 10 is GZIP overhead if data is uncompressable and gzip level is 0
   // 26 is gzip header + trailer
   val MaxCompressed = 65536 - 26 // 26 is gzip header + trailer
 
@@ -43,8 +44,8 @@ object BlockGzip {
       else {
         def header(compressed: ByteString): ByteString =
           ByteString(
-            0x1F, // ID1
-            0x8B, // ID2
+            0x1f, // ID1
+            0x8b, // ID2
             8, // CM = Deflate
             4, // FLG
             0, // MTIME 1
@@ -123,10 +124,9 @@ object BlockGzip {
     val indexSink2 = Flow[(ByteString, List[Long])]
       .mapConcat(_._2)
       .zipWithIndex
-      .map {
-        case (vfp, idx) =>
-          val blockAddress = BlockGunzip.getFileOffset(vfp)
-          (blockAddress, vfp, idx)
+      .map { case (vfp, idx) =>
+        val blockAddress = BlockGunzip.getFileOffset(vfp)
+        (blockAddress, vfp, idx)
       }
       .via(adjacentSpan(_._1))
       .filter(_.nonEmpty)
@@ -159,39 +159,37 @@ object BlockGzip {
       index: Path,
       compressionLevel: Int = 1,
       customDeflater: Option[() => Deflater] = None
-  )(
-      implicit ec: ExecutionContext
+  )(implicit
+      ec: ExecutionContext
   ): Sink[ByteString, Future[(IOResult, IOResult)]] =
     sinkWithIndex(
       dataSink = FileIO.toPath(data),
       indexSink = FileIO.toPath(index),
       compressionLevel,
       customDeflater
-    ).mapMaterializedValue {
-      case (f1, f2) =>
-        for {
-          r1 <- f1
-          r2 <- f2
-        } yield (r1, r2)
+    ).mapMaterializedValue { case (f1, f2) =>
+      for {
+        r1 <- f1
+        r2 <- f2
+      } yield (r1, r2)
     }
 
   def sinkWithIndexAsByteString[Mat](
       data: Sink[ByteString, Mat],
       compressionLevel: Int = 1,
       customDeflater: Option[() => Deflater] = None
-  )(
-      implicit ec: ExecutionContext
+  )(implicit
+      ec: ExecutionContext
   ): Sink[ByteString, Future[(Mat, ByteString)]] =
     sinkWithIndex(
       dataSink = data,
       indexSink = Sink.seq[ByteString],
       compressionLevel,
       customDeflater
-    ).mapMaterializedValue {
-      case (dataMat, futureIndex) =>
-        for {
-          indexBytes <- futureIndex
-        } yield (dataMat, indexBytes.foldLeft(ByteString.empty)(_ ++ _))
+    ).mapMaterializedValue { case (dataMat, futureIndex) =>
+      for {
+        indexBytes <- futureIndex
+      } yield (dataMat, indexBytes.foldLeft(ByteString.empty)(_ ++ _))
     }
 
   def apply(
@@ -209,8 +207,8 @@ object BlockGzip {
               ByteString.empty,
               ByteString.empty,
               Nil,
-              customDeflater.getOrElse(
-                () => new Deflater(compressionLevel, true)
+              customDeflater.getOrElse(() =>
+                new Deflater(compressionLevel, true)
               )(),
               new CRC32
             )
@@ -310,11 +308,14 @@ object BlockGzip {
               }
             }
           )
-          setHandler(out, new OutHandler {
-            override def onPull(): Unit = {
-              pull(in)
+          setHandler(
+            out,
+            new OutHandler {
+              override def onPull(): Unit = {
+                pull(in)
+              }
             }
-          })
+          )
         }
     })
 
