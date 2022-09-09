@@ -62,7 +62,7 @@ lazy val core = (project in file("core"))
   .settings(
     name := "lame",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-stream" % "2.6.16",
+      "com.typesafe.akka" %% "akka-stream" % "2.6.20",
       "org.scalatest" %% "scalatest" % "3.2.10" % Test,
       "com.github.samtools" % "htsjdk" % "2.19.0" % Test
     )
