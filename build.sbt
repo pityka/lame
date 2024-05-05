@@ -15,8 +15,8 @@ inThisBuild(
 )
 
 val commonSettings = Seq(
-  scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.12.15", "2.13.6"),
+  scalaVersion := "2.13.14",
+  crossScalaVersions := Seq("2.12.15", "2.13.14"),
   parallelExecution in Test := false,
   scalacOptions ++= Seq(
     "-deprecation", // Emit warning and location for usages of deprecated APIs.
